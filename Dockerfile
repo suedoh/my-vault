@@ -24,9 +24,6 @@ RUN groupadd -g 1000 ansible && \
 RUN mkdir -p -m 0600 ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-RUN --mount=type=ssh git clone -b devel https://github.com/ansible/ansible.git /ansible && \
-    chown -R 1000:1000 /ansible
-
 RUN python3 -m pip install -r /ansible/requirements.txt
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
