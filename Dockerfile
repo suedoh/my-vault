@@ -1,31 +1,11 @@
-# syntax=docker/dockerfile:experimental
-FROM ubuntu:18.04
+FROM alpine:3.14
+#RUN apk add --no-cache mysql-client
+#ENTRYPOINT ["mysql"]
+RUN apk add --no-cache python3 \
+    ansible
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV PATH /ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RUN mkdir -p /vault
+WORKDIR /vault
 
-RUN apt-get update && \
-    apt-get -y install \
-        git \
-        openssh-client \
-        python3.7 \
-        python3.7-dev \
-        python3-pip \
-        python3-setuptools \
-        python3-pygit2 \
-        build-essential \
-        libssl-dev \
-        libffi-dev \
-        man
-
-RUN groupadd -g 1000 ansible && \
-    useradd -u 1000 -g ansible -d /home/ansible -m -k /etc/skel -s /bin/bash ansible
-
-RUN mkdir -p -m 0600 ~/.ssh && \
-    ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-RUN ln -s /usr/bin/python3 /usr/bin/python
-
-RUN echo '. /ansible/hacking/env-setup' >> /home/ansible/.bashrc
-
-ENTRYPOINT ["/ansible/bin/ansible"]
+COPY vault/* /vault
+COPY .bashrc /root
